@@ -18,12 +18,12 @@ from django.contrib import admin
 
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
-	url(r'^', include('account.urls')),
-	url(r'^/account/', include('account.urls')),
-	url(r'^/dashboard/', include('dashboard')),
-	url(r'^/device/', include('device.urls')),
-	url(r'^/timedtask/', include('timedtask.urls')),
-	url(r'^/deploy/', include('deploy.urls')),
-	url(r'^/log/', include('log.urls')),
+	#url(r'^', include('account.urls')),
+	url(r'^account/', include('account.urls')),
+	url(r'^dashboard/', include('dashboard.urls')),
+	url(r'^device/', include('device.urls')),
+	url(r'^timedtask/', include('timedtask.urls')),
+	url(r'^deploy/', include('deploy.urls')),
+	url(r'^log/', include('log.urls')),
 	
 ]
