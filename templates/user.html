@@ -1,0 +1,162 @@
+{% extends 'bash.html' %}
+{% block content %}
+{% load staticfiles %}
+    <section class="content-header">
+      <div class="row">
+	    <div class="col-lg-3 col-xs-6">
+		    <div class="row">
+			  <div class="col-lg-4 col-xs-6">
+		        <button type="button" class="btn btn-block btn-primary " data-toggle="modal" data-target="#add">添加用户</button>
+			  </div>
+			  <div class="col-lg-4 col-xs-6">
+		        <button type="button" class="btn btn-block btn-primary btn-danger" onclick="MultiDel()">删除用户</button>
+			  </div>
+		    </div>
+		</div>
+	  </div>
+	  <div class="modal modal-primary fade" id="add">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">添加用户</h4>
+              </div>
+	   <form class="from-signin" action="/account/user_add/" method="POST">
+	      {% csrf_token %}
+              <div class="modal-body">
+                  <div class="box-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">用户名称</label>
+                      <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="用户名称">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">用户密码</label>
+                      <input type="password" name="password" class="form-control" id="exampleInputEmail1" placeholder="用户密码">
+                    </div>
+					<div class="form-group">
+					  <label>所属组</label>
+						<select class="form-control" name="group">
+						{% for i in user_group %}
+						<option>{{i.name}}</option>
+						{% endfor %} 
+						</select>
+					</div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">邮箱地址</label>
+                      <input type="exampleInputEmail1" name="email" class="form-control" id="exampleInputEmail1" placeholder="邮箱地址">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">备注信息</label>
+                      <input type="text" name="introduce" class="form-control" id="exampleInputEmail1" placeholder="备注信息">
+                    </div>
+                  </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-outline">保存</button>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+	  </div>	
+    </section>
+
+    <section class="content">
+      <div class="row">
+	      <div class="col-lg-12 col-xs-12">
+		    <div class="box-body no-padding">
+		    <table class="table table-striped">
+		  	    <tr>
+				  <th>
+                      <input id="allChecks" type="checkbox" class="i-checks" name="input[]" value="checkall" data-editable='false' onclick="ckAll()">
+                  </th>
+		  		  <th>用户名称</th>
+		  	 	  <th>所属组</th>
+				  <th>邮箱地址</th>
+				  <th>备注信息</th>
+				  <th>用户编辑</th>
+		  	    </tr>
+				{% for i in user_name %}
+		  	       <tr>
+				  <th>
+                    <input  type="checkbox" class="i-checks" name="input[]" value="{{i.id}}" data-editable='false' onclick="check_all('asset_form')">
+                  </th>
+		  		  <th>{{i.name}}</th>
+		  		  <th>{{i.user_group.name}}</th>
+				  <th>{{i.email}}</th>
+				  <th>{{i.introduce}}</th>
+				  <th>
+				    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#{{i.id}}">编辑</button>
+				  </th>
+		    
+                  </tr>
+                {% endfor %} 
+           {% for i in user_name %}
+	  <div class="modal modal-primary fade" id="{{i.id}}">
+              <div class="modal-dialog">
+               <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title">编辑主机</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="box-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">用户名称</label>
+                      <input type="text" class="form-control" name="name" id="exampleInputEmail1" value="{{i.name}}">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">所属组</label>
+                      <input type="text" class="form-control" name="group" id="exampleInputEmail1" value="{{i.user_group.name}}">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">邮箱地址</label>
+                      <input type="text" class="form-control" name="email" id="exampleInputEmail1" value="{{i.email}}">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">备注信息</label>
+                      <input type="text" class="form-control" name="introduce" id="exampleInputEmail1" value="{{i.introduce}}">
+                    </div>
+                  </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-outline">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+	  </div>
+            {% endfor %}
+		    </div>
+		</div>
+	  </div>
+	  
+       
+    </section>
+
+<script>
+function ckAll(){
+            var flag = document.getElementById("allChecks").checked;
+            var cks = document.getElementsByName("input[]");
+            for(var i=0;i<cks.length;i++){
+                cks[i].checked=flag;
+            }
+        }
+function MultiDel(){
+            if(!confirm("确定删除这些吗?")){
+                return;
+            }
+            var cks=document.getElementsByName("input[]");
+            var str = "";
+            //拼接所有的id
+            for(var i=0;i<cks.length;i++){
+                if(cks[i].checked){
+                    str+=cks[i].value+",";
+                }
+            }
+            //去掉字符串未尾的','
+            str=str.substring(0, str.length-1);
+            location.href='/user_del?id='+str;
+        }
+
+</script>
+{% endblock %}
+
