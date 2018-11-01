@@ -1,0 +1,217 @@
+{% extends 'bash.html' %}
+{% block content %}
+{% load staticfiles %}
+    <section class="content-header">
+      <div class="row">
+	    <div class="col-lg-3 col-xs-6">
+		    <div class="row">
+			  <div class="col-lg-4 col-xs-6">
+		        <button type="button" class="btn btn-block btn-primary " data-toggle="modal" data-target="#add">添加主机</button>
+			  </div>
+			  <div class="col-lg-4 col-xs-6">
+		        <button type="button" class="btn btn-block btn-primary btn-danger" onclick="MultiDel()">删除主机</button>
+			  </div>
+		    </div>
+		</div>
+	  </div>
+	  <div class="modal modal-primary fade" id="add">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">添加主机</h4>
+              </div>
+	   <form class="from-signin" action="/device/dev_add/" method="POST">
+	      {% csrf_token %}
+              <div class="modal-body">
+                  <div class="box-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">主机名称</label>
+                      <input type="text" name="hostname" class="form-control"  placeholder="主机名称">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">主机IP</label>
+                      <input type="text" name="ip" class="form-control"  placeholder="主机IP">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">连接方式</label>
+                      <input type="text" name="link" class="form-control"  placeholder="连接方式">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">用户名</label>
+                      <input type="text" name="username" class="form-control"  placeholder="用户名">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">密码</label>
+                      <input type="password" name="password" class="form-control"  placeholder="密码">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">端口</label>
+                      <input type="text" name="port" class="form-control"  placeholder="端口">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">主机位置</label>
+                      <input type="text" name="position" class="form-control"  placeholder="主机位置">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">主机备注</label>
+                      <input type="text" name="introduce" class="form-control"  placeholder="主机备注">
+                    </div>
+					<div class="form-group">
+					  <label>所属组</label>
+						<select class="form-control" name="group">
+						{% for i in user_group %}
+						<option>{{i.name}}</option>
+						{% endfor %} 
+						</select>
+					</div>
+                  </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-outline">保存</button>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+	  </div>	
+    </section>
+
+    <section class="content">
+      <div class="row">
+	      <div class="col-lg-12 col-xs-12">
+		    <div class="box-body no-padding">
+		    <table class="table table-striped">
+		  	    <tr>
+				  <th>
+                      <input id="allChecks" type="checkbox" class="i-checks" name="input[]" value="checkall" data-editable='false' onclick="ckAll()">
+                  </th>
+		  		  <th>主机名称</th>
+		  	 	  <th>主机IP</th>
+				  <th>主机状态</th>
+				  <th>主机位置</th>
+				  <th>主机备注</th>
+				  <th>主机编辑</th>
+		  	    </tr>
+				{% for i in device_name %}
+		  	       <tr>
+				  <th>
+                    <input  type="checkbox" class="i-checks" name="input[]" value="{{i.id}}" data-editable='false' onclick="check_all('asset_form')">
+                  </th>
+		  		  <th>{{i.hostname}}</th>
+		  		  <th>{{i.ip}}</th>
+				  {% if i.state == true %}
+						<th><small class="label bg-green">在线</small></th>
+				  {% else %}
+						<th><small class="label bg-red">离线</small></th>
+				  {% endif %}
+				  <th>{{i.position}}</th>
+				  <th>{{i.introduce}}</th>
+				  <th>
+					<button type="button" class="btn btn-primary ">WEBSSH</button>
+				    <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#{{i.id}}">编辑</button>
+					<button type="button" class="btn btn-primary ">详情</button>
+				  </th>
+		    
+                  </tr>
+                {% endfor %} 
+           {% for i in device_name %}
+	  <div class="modal modal-primary fade" id="{{i.id}}">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title">编辑主机</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="box-body">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">主机名称</label>
+                      <input type="text" class="form-control" name="{{i.id}}"  value="{{i.hostname}}">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">主机IP</label>
+                      <input type="text" class="form-control" name="{{i.id}}"  value="{{i.ip}}">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">主机位置</label>
+                      <input type="text" name="{{i.id}}" class="form-control"  value="{{i.position}}">
+                    </div>
+					<div class="form-group">
+                      <label for="exampleInputEmail1">主机备注</label>
+                      <input type="text" name="{{i.id}}" class="form-control"  value="{{i.introduce}}">
+                    </div>
+					<div class="form-group">
+					  <label>所属组</label>
+						<select class="form-control" name="{{i.id}}">
+						{% for i in user_group %}
+						<option>{{i.name}}</option>
+						{% endfor %} 
+						</select>
+					</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-outline" onclick="dev_edit('{{i.id}}')">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+	  </div>
+            {% endfor %}
+		</div>
+		</div>
+	  </div>
+	  
+       
+    </section>
+
+<script>
+function ckAll(){
+            var flag = document.getElementById("allChecks").checked;
+            var cks = document.getElementsByName("input[]");
+            for(var i=0;i<cks.length;i++){
+                cks[i].checked=flag;
+            }
+        }
+function MultiDel(){
+            if(!confirm("确定删除这些吗?")){
+                return;
+            }
+            var cks=document.getElementsByName("input[]");
+            var str = "";
+            //拼接所有的id
+            for(var i=0;i<cks.length;i++){
+                if(cks[i].checked){
+                    str+=cks[i].value+",";
+                }
+            }
+            //去掉字符串未尾的','
+            str=str.substring(0, str.length-1);
+            location.href='/device/dev_del?id='+str;
+        }
+function dev_edit(id){
+			var userid = id
+			var name = document.getElementsByName(id)[0].value;
+			var ip = document.getElementsByName(id)[1].value;
+			var position = document.getElementsByName(id)[2].value;
+			var introduce = document.getElementsByName(id)[3].value;
+			var group = document.getElementsByName(id)[4].value;  
+			$.ajaxSetup({data: {csrfmiddlewaretoken: '{{ csrf_token }}'}});
+			$.ajax({
+				url: '/device/dev_edit/',
+				type: 'POST',
+				data: {
+					'dev_id': userid,
+					'dev_hname': name,
+					'dev_ip': ip,
+					'dev_position': position,
+					'dev_introduce': introduce,
+					'dev_group': group,
+					},
+				//dataType: 'JSON',
+				success: function(data){
+					location.reload()
+					},
+				});
+			
+			
+}
+</script>
+{% endblock %}
