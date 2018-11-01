@@ -8,5 +8,10 @@ from django.http import HttpResponse
 from . import models
 
 def index(request):
-	
-	return render(request, 'index.html')
+	on = models.device.objects.filter(state=1).count()
+	off = models.device.objects.filter(state=0).count()
+	dev_count = models.device.objects.all().count()
+	user_count = models.user.objects.all().count()
+	user = models.user.objects.all()
+	device = models.device.objects.all()
+	return render(request, 'index.html',locals())

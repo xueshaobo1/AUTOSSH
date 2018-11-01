@@ -1,6 +1,8 @@
 {% extends 'bash.html' %}
 {% block content %}
 {% load staticfiles %}
+<script src="{% static 'echarts.min.js' %}"></script>
+<script src="{% static 'shine.js' %}"></script>
 <section class="content-header">
       <h1>
         Dashboard
@@ -19,7 +21,7 @@
           <!-- small box -->
           <div class="small-box bg-aqua">
             <div class="inner">
-              <h3>150</h3>
+              <h3>{{ dev_count }}</h3>
 
               <p>主机总数</p>
             </div>
@@ -34,7 +36,7 @@
           <!-- small box -->
           <div class="small-box bg-green">
             <div class="inner">
-              <h3>53<sup style="font-size: 20px"></h3>
+              <h3>{{ on }}<sup style="font-size: 20px"></h3>
 
               <p>在线主机</p>
             </div>
@@ -49,7 +51,7 @@
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-              <h3>44</h3>
+              <h3>{{ off }}</h3>
 
               <p>离线主机</p>
             </div>
@@ -64,7 +66,7 @@
           <!-- small box -->
           <div class="small-box bg-yellow">
             <div class="inner">
-              <h3>65</h3>
+              <h3>{{ user_count }}</h3>
 
               <p>用户人数</p>
             </div>
@@ -87,20 +89,24 @@
 		  	  <table class="table table-striped">
 		  	    <thead>
 		  		  <tr>
-				    <th>
-                      <input  type="checkbox" class="i-checks" name="input[]" value="{{i.id}}" data-editable='false' onclick="check_all('asset_form')">
-                    </th>
-		  			<th>任务名称</th>
-		  			<th>执行时间</th>
-		  			<th>执行主机</th>
+		  			<th>主机名称</th>
+		  			<th>所属组</th>
+		  			<th>主机状态</th>
+					<th>主机备注</th>
 		  		  </tr>
 		  		</thead>
 		  		<tbody>
 		  		  <tr>
-		  			<th>web-server</th>
-		  			<th>192.168.2.2</th>
-		  			<th><span class="badge bg-green">在线</span></th>
-					
+					{% for i in device %}
+						<th>{{i.hostname}}</th>
+						<th>{{i.user_group.name}}</th>
+		  			{% if i.state == true %}
+						<th><span class="badge bg-green">在线</span></th>
+					{% else %}
+						<th><span class="badge bg-red">在线</span></th>
+					{% endif %}
+						<th>{{i.introduce}}</th>
+					{% endfor %}
 		  		  </tr>
 		  		</tbody>
 		  	  </table>
@@ -108,26 +114,29 @@
 		  	</div>
 		  </div>
 	      
-	      
-	      <section class="col-lg-6 connectedSortable">
-		    <div class="box box-solid bg-light-blue-gradient">
-              <div class="box-header">
-              
-                <i class="fa fa-map-marker"></i>
-          
-                <h3 class="box-title">
-                  攻击图
-                </h3>
-              </div>
-              <div class="box-body">
-                <div id="world-map" style="height: 300px; width: 100%;"></div>
-              </div>
-            </div>
-		    
-		  </section>
+		<div class="col-lg-6 col-xs-6">
+			<div class="col-lg-12 col-xs-12" style="height:400px;" id="main">
+			</div>
+		</div>
 	    </div>
 </section>
-
-
-
+<script type="text/javascript">
+	var myChart = echarts.init(document.getElementById('main'),'light');
+	var option = {
+            xAxis: {
+			type: 'category',
+			boundaryGap: false,
+			data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+		},
+			yAxis: {
+			type: 'value'
+		},
+			series: [{
+			data: [820, 932, 901, 934, 1290, 1330, 1320],
+			type: 'line',
+			areaStyle: {}
+		}]
+	};
+	myChart.setOption(option);
+</script>
 {% endblock %}
