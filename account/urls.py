@@ -8,5 +8,6 @@ urlpatterns = [
 	url(r'^user/', views.user),
 	url(r'^user_add/', views.user_add),
 	url(r'^user_del/', views.user_del),
+	url(r'^user_edit/', views.user_edit),
 	
 ]

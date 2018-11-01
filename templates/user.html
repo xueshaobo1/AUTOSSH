@@ -26,11 +26,11 @@
                   <div class="box-body">
                     <div class="form-group">
                       <label for="exampleInputEmail1">用户名称</label>
-                      <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="用户名称">
+                      <input type="text" name="name" class="form-control"  placeholder="用户名称">
                     </div>
                     <div class="form-group">
                       <label for="exampleInputEmail1">用户密码</label>
-                      <input type="password" name="password" class="form-control" id="exampleInputEmail1" placeholder="用户密码">
+                      <input type="password" name="password" class="form-control"  placeholder="用户密码">
                     </div>
 					<div class="form-group">
 					  <label>所属组</label>
@@ -42,11 +42,11 @@
 					</div>
 					<div class="form-group">
                       <label for="exampleInputEmail1">邮箱地址</label>
-                      <input type="exampleInputEmail1" name="email" class="form-control" id="exampleInputEmail1" placeholder="邮箱地址">
+                      <input type="exampleInputEmail1" name="email" class="form-control" placeholder="邮箱地址">
                     </div>
 					<div class="form-group">
                       <label for="exampleInputEmail1">备注信息</label>
-                      <input type="text" name="introduce" class="form-control" id="exampleInputEmail1" placeholder="备注信息">
+                      <input type="text" name="introduce" class="form-control"  placeholder="备注信息">
                     </div>
                   </div>
               <div class="modal-footer">
@@ -92,8 +92,8 @@
                 {% endfor %} 
            {% for i in user_name %}
 	  <div class="modal modal-primary fade" id="{{i.id}}">
-              <div class="modal-dialog">
-               <div class="modal-content">
+            <div class="modal-dialog">
+              <div class="modal-content">
                 <div class="modal-header">
                 <h4 class="modal-title">编辑主机</h4>
               </div>
@@ -101,24 +101,32 @@
                   <div class="box-body">
                     <div class="form-group">
                       <label for="exampleInputEmail1">用户名称</label>
-                      <input type="text" class="form-control" name="name" id="exampleInputEmail1" value="{{i.name}}">
+                      <input type="text" class="form-control" name="{{i.id}}"  value="{{i.name}}">
                     </div>
+					<!-- <div class="form-group"> -->
+                      <!-- <label for="exampleInputEmail1">所属组</label> -->
+                      <!-- <input type="text" class="form-control" name="{{i.id}}"  value="{{i.user_group.name}}"> -->
+                    <!-- </div> -->
 					<div class="form-group">
-                      <label for="exampleInputEmail1">所属组</label>
-                      <input type="text" class="form-control" name="group" id="exampleInputEmail1" value="{{i.user_group.name}}">
-                    </div>
+					  <label>所属组</label>
+						<select class="form-control" name="{{i.id}}">
+						{% for i in user_group %}
+						<option>{{i.name}}</option>
+						{% endfor %} 
+						</select>
+					</div>
 					<div class="form-group">
                       <label for="exampleInputEmail1">邮箱地址</label>
-                      <input type="text" class="form-control" name="email" id="exampleInputEmail1" value="{{i.email}}">
+                      <input type="text" class="form-control" name="{{i.id}}"  value="{{i.email}}">
                     </div>
 					<div class="form-group">
                       <label for="exampleInputEmail1">备注信息</label>
-                      <input type="text" class="form-control" name="introduce" id="exampleInputEmail1" value="{{i.introduce}}">
+                      <input type="text" class="form-control" name="{{i.id}}"  value="{{i.introduce}}">
                     </div>
                   </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
-                <button type="submit" class="btn btn-outline">保存</button>
+                <button type="submit" class="btn btn-outline" onclick="user_edit('{{i.id}}')">保存</button>
               </div>
             </div>
           </div>
@@ -156,7 +164,31 @@ function MultiDel(){
             str=str.substring(0, str.length-1);
             location.href='/user_del?id='+str;
         }
-
+function user_edit(id){
+			var userid = id
+			var name = document.getElementsByName(id)[0].value;
+			var group = document.getElementsByName(id)[1].value;
+			var email = document.getElementsByName(id)[2].value;
+			var introduce = document.getElementsByName(id)[3].value;  
+			$.ajaxSetup({data: {csrfmiddlewaretoken: '{{ csrf_token }}'}});
+			$.ajax({
+				url: '/account/user_edit/',
+				type: 'POST',
+				data: {
+					'user_id': userid,
+					'user_name': name,
+					'user_group': group,
+					'user_email': email,
+					'user_introduce': introduce,
+					},
+				//dataType: 'JSON',
+				success: function(data){
+					location.reload()
+					},
+				});
+			
+			
+}
 </script>
 {% endblock %}
 

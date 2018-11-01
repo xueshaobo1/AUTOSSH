@@ -63,11 +63,21 @@ def user_del(request):
 	except:
 		return redirect('/account/user/')
 	
-	
-	
-	
-	
-	
+def user_edit(request):
+	if request.method == "POST":
+		edit_id = request.POST.get('user_id')
+		edit_user = request.POST.get('user_name')
+		edit_email = request.POST.get('user_email')
+		edit_group = request.POST.get('user_group')
+		edit_introduce = request.POST.get('user_introduce')
+		up_group = models.group.objects.get(name=edit_group)
+		up = models.user.objects.get(id=edit_id)
+		up.name = edit_user
+		up.email = edit_email
+		up.user_group = up_group
+		up.introduce = edit_introduce
+		up.save()
+		return redirect('/account/user/')
 	
 	
 	
