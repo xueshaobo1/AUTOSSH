@@ -1,0 +1,83 @@
+{% extends 'bash.html' %}
+{% block content %}
+{% load staticfiles %}
+    <section class="content">
+		<div class="row">
+			<div class="col-md-12 col-lg-12 col-xs-12">
+				 <div class="box">
+				   <div class="box-header with-border">
+					<h3 class="box-title">脚本管理</h3>
+					<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+					<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+					</div>
+				  </div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6 col-lg-6 col-xs-6">
+								<table class="table table-striped">
+									<tr>
+										<th>脚本名称</th>
+										<th>脚本编辑</th>
+									</tr>
+									{% for i in shell_list %}
+									<tr>
+										
+										<th>{{ i }}</th>
+										<th>
+										<button type="button" class="btn btn-danger" onclick="del_shell('{{i}}')">删除</button>
+										</th>
+									</tr>
+									{% endfor %}
+								</table>
+							</div>
+							<div class="col-md-6 col-lg-6 col-xs-6">
+								<h4>添加脚本<small>脚本目录位于站点shell文件夹中</small></h4>
+								<form class="from-signin" action="/timedtask/add_shell/" method="POST">
+								{% csrf_token %}
+								<input type="text" name="name" class="form-control"  placeholder="脚本名称"></br>
+								<textarea class="col-md-12 col-lg-12 col-xs-12"  name= "body" rows="10" placeholder="仅支持支持shell脚本"></textarea>
+								
+								<div class="pull-left">
+									<button type="reset" class="btn  ">清空</button>
+								</div>
+								<div class="pull-right">
+									<button type="submit" class="btn ">保存</button>
+								</div>
+								
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+       
+    </section>
+<script>
+
+	function del_shell(id){
+		var name = id
+		$.ajaxSetup({data: {csrfmiddlewaretoken: '{{ csrf_token }}'}});
+			$.ajax({
+				url: '/timedtask/del_shell/',
+				type: 'POST',
+				data: {
+					'name': name,
+					},
+				success: function(data){
+					location.reload()
+					},
+				});
+	
+	
+	}
+	
+
+
+
+
+</script>
+	
+
+{% endblock %}
